@@ -134,7 +134,7 @@ The `args` object supports the following:
 
 
 
-## Display Version Info
+## Displaying Version Info
 
 The `showPackageVersion` function can be used to show a version banner using information from a `package.json` file.
 
@@ -170,7 +170,7 @@ showArgs({
 });
 ```
 
-The `showArgs` function aligns the arguments and descriptions into two columns, wrapping the right description column at the terminal width (if output to a console terminal).
+The `showArgs` function aligns the arguments and descriptions into two columns, wrapping the right description column at the terminal width (if output is being sent to a console terminal).
 
 ## License
 
