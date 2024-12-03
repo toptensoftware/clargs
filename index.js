@@ -1,4 +1,5 @@
 import fs from 'node:fs';
+import { argv } from 'node:process';
 
 export function clargs(args)
 {
@@ -10,6 +11,16 @@ export function clargs(args)
     let argVal = null;
     let argName = null;
     let resolvedVal = undefined;
+
+    function capture()
+    {
+        return { argIndex, shortArgIndex, argVal, argName, resolvedVal }
+    }
+
+    function restore(val)
+    {
+        ({ argIndex, shortArgIndex, argVal, argName, resolvedVal } = val);
+    }
 
     function next()
     {
@@ -185,6 +196,8 @@ export function clargs(args)
         get intValue() { return intValue() },
         get floatValue() { return floatValue() },
         get tail() { return tail() },
+        capture,
+        restore,
         oneOfValue(values) { return oneOfValue(values) },
     }
 }

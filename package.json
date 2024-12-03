@@ -1,6 +1,6 @@
 {
   "name": "@toptensoftware/clargs",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Command Line Args Helpers",
   "main": "index.js",
   "type": "module",

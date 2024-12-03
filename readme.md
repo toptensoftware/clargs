@@ -44,6 +44,7 @@ Argument processing:
 * Tail arguments (all remaining argument)
 * Support for string, boolean, integer, floating point and one-of 
   (enum) values.  Other types you can just parse yourself as you process the arguments.
+* Look ahead and rewind current position.
 
 
 Although not technically features of the library, due to the way arguments
@@ -176,6 +177,10 @@ The `args` object supports the following:
   `allowed` can be an array of strings, or a string with values
   separated by commas `,` or vertical bars (`|`).  eg: `"apples|pears|bananas"`.
 
+* `capture()` - returns an object that captures the current state of the 
+  iteration loop
+
+* `restore(state)` - restores a previously capture state
 
 
 ## Displaying Version Info
