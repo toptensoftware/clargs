@@ -154,6 +154,9 @@ The `args` object supports the following:
   For short named values these are either delimited, separated, or the rest of 
   the short value string.  eg: `-avalue` gives name "a" and value "value"
 
+* `peekValue` - gets the value of the argument without disrupting the 
+  internal state.  (See Value Side Effects below)
+
 * `tail` - returns all arguments after the current one as an array and
   causes the next call to `next()` to return `false`.
 
@@ -181,6 +184,28 @@ The `args` object supports the following:
   iteration loop
 
 * `restore(state)` - restores a previously capture state
+
+
+## Value Side Effects
+
+Reading any of the value properties (`value`, `boolValue` etc...) can have 
+side effects such as internally incrementing the current argument index etc...
+
+This is generally considered bad form, but for the way the argument processing
+is indended to be used, this approach provides a much cleaner way of using the 
+API instead of having a series of `getValue()` functions, or a method to consume
+an argument value.
+
+The reason for this is at the point where arguments are iterated, its not known
+if the argument expects a value or not.  It's not until it's asked for, that its
+resolved to the next argument, the rest of a short named argument etc...
+
+The big downside is: if you put any of these properties in the debugger watch
+window, or manually `console.log` them or otherwise read them you can change
+the behaviour.
+
+To help workaround this, use the `peekValue` property to get the current value
+without side effects.
 
 
 ## Displaying Version Info

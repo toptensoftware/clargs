@@ -187,11 +187,19 @@ export function clargs(args)
         return val;
     }
 
+    function peekValue()
+    {
+        let save = capture();
+        let value = getValue();
+        restore(save);
+        return value;
+    }
+
     return {
         next,
         get name() { return getName() },
+        get peekValue() { return peekValue() },
         get value() { return getValue() },
-        get hasValue() { return hasValue() },
         get boolValue() { return boolValue() },
         get intValue() { return intValue() },
         get floatValue() { return floatValue() },
