@@ -15,7 +15,10 @@ either
 * too minimal and too quiet about mistyped arguments.  
 * some have no support for help output, 
 * some don't support sub-commands or it's complicated to setup
-* many require an up-front definition or configuration of arguments which is fine when what you need fits, but breaks hard when it doesn't.
+* many require an up-front definition or configuration of arguments which 
+  is fine when what you need fits, but breaks hard when it doesn't.
+* some don't support, or require special up-front configuration to support
+  order-sensitive or multiple value arguments.
 
 `clargs` tries to sit somewhere in the middle by:
 
@@ -191,7 +194,7 @@ writes to console a message similar to:
 
 ```
 ${pkg.name} ${pkg.version} - ${pkg.description}
-#{pkg.copyright}
+${pkg.copyright}
 ```
 
 If the package doesn't contain a `copyright` field it instead displays `author` and `license`.
