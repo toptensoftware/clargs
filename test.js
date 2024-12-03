@@ -45,13 +45,40 @@ test("switch", () => {
 
 
 
-test("named value", () => {
+test("named value (assigned)", () => {
 
     let args = clargs(["--name=value"]);
     
     assert(args.next());
     assert.equal(args.name, "name");
     assert.equal(args.value, "value");
+});
+
+test("named value (separated)", () => {
+
+    let args = clargs(["--name", "value"]);
+    
+    assert(args.next());
+    assert.equal(args.name, "name");
+    assert.equal(args.value, "value");
+});
+
+test("empty value (assigned)", () => {
+
+    let args = clargs(["--name:", "value"]);
+    
+    assert(args.next());
+    assert.equal(args.name, "name");
+    assert.equal(args.value, "");
+});
+
+test("empty value (separated)", () => {
+
+    let args = clargs(["--name", ""]);
+    
+    assert(args.next());
+    assert.equal(args.name, "name");
+    assert.equal(args.value, "");
 });
 
 test("short switches", () => {
@@ -79,7 +106,7 @@ test("short switch + short named value", () => {
     assert(!args.next());
 });
 
-test("short switch + separated value", () => {
+test("short switch + assigned value", () => {
 
     let args = clargs(["-a=value"]);
 
@@ -88,6 +115,21 @@ test("short switch + separated value", () => {
     assert.equal(args.value, "value");
     assert(!args.next());
 });
+
+test("short switch + short separated value", () => {
+
+    let args = clargs(["-ab", "value"]);
+
+    assert(args.next());
+    assert.equal(args.name, "a");
+    
+    assert(args.next());
+    assert.equal(args.name, "b");
+    assert.equal(args.value, "value");
+    assert(!args.next());
+});
+
+
 
 
 test("unexpected value", () => {
@@ -160,6 +202,40 @@ test("switch yes value", () => {
     assert.equal(args.boolValue, true);
     assert.throws(() => args.next());
 });
+
+test("switch zero value", () => {
+
+    let args = clargs(["--switch=0"]);
+
+    assert(args.next());
+    assert.equal(args.name, "switch");
+    assert.equal(args.boolValue, false);
+    assert.throws(() => args.next());
+});
+
+test("switch non-zero value", () => {
+
+    let args = clargs(["--switch=10"]);
+
+    assert(args.next());
+    assert.equal(args.name, "switch");
+    assert.equal(args.boolValue, true);
+    assert.throws(() => args.next());
+});
+
+
+test("switch value doesn't use separated", () => {
+
+    let args = clargs(["--switch", "off"]);
+
+    assert(args.next());
+    assert.equal(args.name, "switch");
+    assert.equal(args.boolValue, true);
+
+    assert(args.next());
+    assert.equal(args.value, "off");
+});
+
 
 
 test("integer value", () => {

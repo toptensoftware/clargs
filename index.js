@@ -44,7 +44,7 @@ export function clargs(args)
             return true;
         }
 
-        let m = argVal.match(/^(?:(--?)(.+?)(?:[:=](.+))?)$/)
+        let m = argVal.match(/^(?:(--?)(.+?)(?:[:=](.*))?)$/)
         if (m)
         {
             argName = m[2];
@@ -92,30 +92,17 @@ export function clargs(args)
         }
         else
         {
-            resolvedVal = argVal;
+            if (argVal == null && argIndex + 1 < args.length)
+            {
+                resolvedVal = args[++argIndex];
+            }
+            else
+            {
+                resolvedVal = argVal;
+            }
             argVal = null;
         }
         return resolvedVal;
-    }
-
-    function hasValue()
-    {
-        if (argName == null)
-            return true;
-
-        if (resolvedVal !== undefined && resolvedVal.length > 0)
-            return true;
-
-        if (shortArgIndex >= 0)
-        {
-            return shortIndexIndex + 1 < argName.length;
-        }
-        else
-        {
-            resolvedVal = argVal;
-            argVal = null;
-        }
-        return argVal !== null && argVal.length > 0;
     }
 
     function tail()
@@ -136,6 +123,11 @@ export function clargs(args)
         // --switch
         if (argName != null && argVal == null)
             return true;
+
+        // Zero vs non-zero value?
+        let num = parseFloat(argVal);
+        if (!isNaN(num))
+            return num != 0;
 
         // --switch:value or unnamed value
         switch (argVal.toLowerCase())

@@ -1,16 +1,58 @@
 # clargs
 
-Tools for processing command line arguments,
+A tiny, flexible, easy to use library for 
+processing command line arguments.
+
+## Why?
+
+There are already quite a few command line processing libraries for Node so why another?
+
+Well over the years I've tried them all (a lot of them anyway) and 
+they're all ok but there's always something annoying or not supported. They're 
+either 
+
+* too big, too cumbersome and trying to do everything all at once, or
+* too minimal and too quiet about mistyped arguments.  
+* some have no support for help output, 
+* some don't support sub-commands or it's complicated to setup
+* many require an up-front definition or configuration of arguments which is fine when what you need fits, but breaks hard when it doesn't.
+
+`clargs` tries to sit somewhere in the middle by:
+
+* Not requiring an upfront definition of arguments.
+* Leaving argument iteration and processing to you.
+* Keeping argument processing separate from help display.
+
+
 
 ## Features
 
+Argument processing:
+
 * Positional arguments eg: `file.txt`
-* Long name switches eg: `--switch`
-* Short name switches eg: `-abc` => `--a --b --c`
-* Long named values eg: `--name=value` or `--name:value`
-* Short named valued eg: `-aVALUE` => `--a:VALUE`
-* Delimter argument `"--"`
+* Long switches: `--switch`
+* Short switches: `-a`
+* Run-on switches: `-abc` (same as `-a -b -c`)
+* Long named values: `--name=value` or `--name:value` or `--name value`
+* Short named values: `-avalue` or `-a value`
+* Run-on short switches with one named value: `-abcvalue` => `-a -b -c:value`
+* Negative switches: `--switch:no` 
+* Delimiter argument: `--`
 * Tail arguments (all remaining argument)
+* Support for string, boolean, integer, floating point and one-of 
+  (enum) values.  Other types you can just parse yourself as you process the arguments.
+
+
+Although not technically features of the library, due to the way arguments
+are processed it also supports:
+
+* Multiple arguments: `-Ipath1 -Ipath2 -Ipath3`
+* Ordered arguments: `--dothis --thenthat --finallythis`
+* Sub-command processing: just break out of current argument iteration
+  loop and start a new one for the sub-command using the tail arguments
+
+Also included are helper functions for displaying version and help information:
+
 * Helper for displaying version info from `package.json`
 * Helper for formatting argument help into two aligned and wrapped
   columns.
@@ -32,21 +74,21 @@ Import `clargs` function.
 import { clargs } from "@toptensoftware/clargs";
 ```
 
-Create an instance, by calling clargs.  With no arguments
-it uses the `process.argv`
+Create an instance, by calling the `clargs()` function.  With no arguments
+it uses `process.argv`:
 
 ```js
 // Uses process.argv.slice(2)
 let args = clargs();     
 ```
 
-or, supply your own args
+or, supply your own args to be processed:
 
 ```js
 let args = clargs(["arg1", "arg2"]);
 ```
 
-Then process args:
+Then iterate the arguments:
 
 ```js
 let port = 3000;
@@ -87,7 +129,7 @@ while (args.next())
             break;
 
         default:
-            throw new Error(`unknown arg: ${args.Name}`);
+            throw new Error(`unknown arg: ${args.name}`);
     }
 }
 ```
@@ -103,22 +145,21 @@ The `args` object supports the following:
 
   For unnamed arguments this is the value as specified.
 
-  For named values these are separated with `:` or `=`.  
-  eg: `--switch:value`
+  For named values these are delimited with `:` or `=`.  (eg: `--name:value`) or spearated as the next argument (eg: `--name value`)
 
-  For short named values these are either separated, or the rest of 
-  the short value string.  eg: -dVALUE gives name "d" and value "VALUE"
-
-* `hasValue` - `true` if the current argument has a value
+  For short named values these are either delimited, separated, or the rest of 
+  the short value string.  eg: `-avalue` gives name "a" and value "value"
 
 * `tail` - returns all arguments after the current one as an array and
   causes the next call to `next()` to return `false`.
 
 * `boolValue` - the boolean value of the current arguments.  
 
-  For switches
-  with no value this returns `true`.  Otherwise the value must be one of
-  `yes`, `true`, `on` or `no`, `false`, `off`.
+  For switches with no value this returns `true`.  Otherwise the value 
+  must be one of `yes`, `true`, `on`, `1` (or any non-zero number) or 
+  `no`, `false`, `off`, `0`.
+
+  `boolValue` never reads from the next argument ie: `--switch false` won't negate a switch.
 
 * `intValue` - the current value parsed with `parseInt`.  Throws an error
   if `parseInt` return `NaN`
@@ -126,11 +167,11 @@ The `args` object supports the following:
 * `floatValue` - the current value parsed with `parseFloat`.  Throws an 
   error if `parseFloat` return `NaN`
 
-* `oneOfValue(value)` - returns one of the specified values, or throws an
+* `oneOfValue(allowed)` - returns one of the allowed values, or throws an
   error.  
   
-  `value` can be an array of strings, or a string with values
-  separated by commas `,` or vertical bars (`|`).  eg: `"apples|pears|bananas`.
+  `allowed` can be an array of strings, or a string with values
+  separated by commas `,` or vertical bars (`|`).  eg: `"apples|pears|bananas"`.
 
 
 
