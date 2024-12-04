@@ -113,23 +113,23 @@ while (args.next())
             // --verbose (same as yes)
             // --verbose:yes 
             // --verbose:no
-            verbose = args.boolValue;
+            verbose = args.readBoolValue();
             break;
 
         case "port":    
             // eg: --port:4000
-            port = args.intValue;
+            port = args.readIntValue();
             break;
 
         case "--":
             // eg: -- tail1 tail2
             // tail = [ "tail1", "tail2" ]
-            theRest = args.tail;
+            theRest = args.readTail();
             break;
 
         case null:
             // unnamed arg eg: file.txt
-            file = args.value;
+            file = args.readValue();
             break;
 
         default:
@@ -145,7 +145,7 @@ The `args` object supports the following:
 
 * `name` - the name of the current argument or `null` for unnamed (aka positional) arguments, or `"--"` if the argument is `"--"`.
 
-* `value` - the value of the argument.
+* `readValue()` - the value of the argument.
 
   For unnamed arguments this is the value as specified.
 
@@ -154,58 +154,49 @@ The `args` object supports the following:
   For short named values these are either delimited, separated, or the rest of 
   the short value string.  eg: `-avalue` gives name "a" and value "value"
 
-* `peekValue` - gets the value of the argument without disrupting the 
-  internal state.  (See Value Side Effects below)
+  `readValue` (and typed variations below) will always return the same value
+  until `next()` is called to move to the next argument.  The reason these
+  are methods and not property accessors is because the first call to `readValue`
+  may affect the internal state.  
+  
+  For example, when reading the value of short name arguments or argument with
+  separated values the current position may be internally advanced after reading 
+  the value.
 
-* `tail` - returns all arguments after the current one as an array and
+  In other words, a call `readValue()` (and variants) indicates the value has 
+  been consumed and used.
+
+* `peekValue` - gets the value of the argument without disrupting the 
+  internal state.
+
+* `readTail()` - returns all arguments after the current one as an array and
   causes the next call to `next()` to return `false`.
 
-* `boolValue` - the boolean value of the current arguments.  
+* `readBoolValue()` - the boolean value of the current arguments.  
 
   For switches with no value this returns `true`.  Otherwise the value 
   must be one of `yes`, `true`, `on`, `1` (or any non-zero number) or 
   `no`, `false`, `off`, `0`.
 
-  `boolValue` never reads from the next argument ie: `--switch false` won't negate a switch.
+  `readBoolValue` never reads from the next argument ie: `--switch false` won't negate a switch.
 
-* `intValue` - the current value parsed with `parseInt`.  Throws an error
+* `readIntValue()` - the current value parsed with `parseInt`.  Throws an error
   if `parseInt` return `NaN`
 
-* `floatValue` - the current value parsed with `parseFloat`.  Throws an 
+* `readFloatValue()` - the current value parsed with `parseFloat`.  Throws an 
   error if `parseFloat` return `NaN`
 
-* `oneOfValue(allowed)` - returns one of the allowed values, or throws an
+* `readEnumValue(allowed)` - returns one of the allowed values, or throws an
   error.  
   
   `allowed` can be an array of strings, or a string with values
-  separated by commas `,` or vertical bars (`|`).  eg: `"apples|pears|bananas"`.
+  separated by commas (`,`) or vertical bars (`|`).  eg: `"apples|pears|bananas"`.
 
 * `capture()` - returns an object that captures the current state of the 
   iteration loop
 
 * `restore(state)` - restores a previously capture state
 
-
-## Value Side Effects
-
-Reading any of the value properties (`value`, `boolValue` etc...) can have 
-side effects such as internally incrementing the current argument index etc...
-
-This is generally considered bad form, but for the way the argument processing
-is indended to be used, this approach provides a much cleaner way of using the 
-API instead of having a series of `getValue()` functions, or a method to consume
-an argument value.
-
-The reason for this is at the point where arguments are iterated, its not known
-if the argument expects a value or not.  It's not until it's asked for, that its
-resolved to the next argument, the rest of a short named argument etc...
-
-The big downside is: if you put any of these properties in the debugger watch
-window, or manually `console.log` them or otherwise read them you can change
-the behaviour.
-
-To help workaround this, use the `peekValue` property to get the current value
-without side effects.
 
 
 ## Displaying Version Info

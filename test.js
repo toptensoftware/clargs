@@ -16,7 +16,7 @@ test("unnamed", () => {
     
     assert(args.next());
     assert.equal(args.name, null);
-    assert.equal(args.value, "apples");
+    assert.equal(args.readValue(), "apples");
     assert(!args.next());
 });
 
@@ -26,11 +26,11 @@ test("unnamed x2", () => {
     
     assert(args.next());
     assert.equal(args.name, null);
-    assert.equal(args.value, "apples");
+    assert.equal(args.readValue(), "apples");
 
     assert(args.next());
     assert.equal(args.name, null);
-    assert.equal(args.value, "pears");
+    assert.equal(args.readValue(), "pears");
     assert(!args.next());
 });
 
@@ -40,7 +40,7 @@ test("switch", () => {
     
     assert(args.next());
     assert.equal(args.name, "switch");
-    assert.equal(args.value, null);
+    assert.equal(args.readValue(), null);
 });
 
 
@@ -51,7 +51,7 @@ test("named value (assigned)", () => {
     
     assert(args.next());
     assert.equal(args.name, "name");
-    assert.equal(args.value, "value");
+    assert.equal(args.readValue(), "value");
 });
 
 test("named value (separated)", () => {
@@ -60,7 +60,7 @@ test("named value (separated)", () => {
     
     assert(args.next());
     assert.equal(args.name, "name");
-    assert.equal(args.value, "value");
+    assert.equal(args.readValue(), "value");
 });
 
 test("empty value (assigned)", () => {
@@ -69,7 +69,7 @@ test("empty value (assigned)", () => {
     
     assert(args.next());
     assert.equal(args.name, "name");
-    assert.equal(args.value, "");
+    assert.equal(args.readValue(), "");
 });
 
 test("empty value (separated)", () => {
@@ -78,7 +78,7 @@ test("empty value (separated)", () => {
     
     assert(args.next());
     assert.equal(args.name, "name");
-    assert.equal(args.value, "");
+    assert.equal(args.readValue(), "");
 });
 
 test("short switches", () => {
@@ -102,7 +102,7 @@ test("short switch + short named value", () => {
     
     assert(args.next());
     assert.equal(args.name, "b");
-    assert.equal(args.value, "value");
+    assert.equal(args.readValue(), "value");
     assert(!args.next());
 });
 
@@ -112,7 +112,7 @@ test("short switch + assigned value", () => {
 
     assert(args.next());
     assert.equal(args.name, "a");
-    assert.equal(args.value, "value");
+    assert.equal(args.readValue(), "value");
     assert(!args.next());
 });
 
@@ -125,7 +125,7 @@ test("short switch + short separated value", () => {
     
     assert(args.next());
     assert.equal(args.name, "b");
-    assert.equal(args.value, "value");
+    assert.equal(args.readValue(), "value");
     assert(!args.next());
 });
 
@@ -149,7 +149,7 @@ test("switch off value", () => {
 
     assert(args.next());
     assert.equal(args.name, "switch");
-    assert.equal(args.boolValue, false);
+    assert.equal(args.readBoolValue(), false);
     assert.throws(() => args.next());
 });
 
@@ -159,7 +159,7 @@ test("switch on value", () => {
 
     assert(args.next());
     assert.equal(args.name, "switch");
-    assert.equal(args.boolValue, true);
+    assert.equal(args.readBoolValue(), true);
     assert.throws(() => args.next());
 });
 
@@ -169,7 +169,7 @@ test("switch false value", () => {
 
     assert(args.next());
     assert.equal(args.name, "switch");
-    assert.equal(args.boolValue, false);
+    assert.equal(args.readBoolValue(), false);
     assert.throws(() => args.next());
 });
 
@@ -179,7 +179,7 @@ test("switch true value", () => {
 
     assert(args.next());
     assert.equal(args.name, "switch");
-    assert.equal(args.boolValue, true);
+    assert.equal(args.readBoolValue(), true);
     assert.throws(() => args.next());
 });
 
@@ -189,7 +189,7 @@ test("switch no value", () => {
 
     assert(args.next());
     assert.equal(args.name, "switch");
-    assert.equal(args.boolValue, false);
+    assert.equal(args.readBoolValue(), false);
     assert.throws(() => args.next());
 });
 
@@ -199,7 +199,7 @@ test("switch yes value", () => {
 
     assert(args.next());
     assert.equal(args.name, "switch");
-    assert.equal(args.boolValue, true);
+    assert.equal(args.readBoolValue(), true);
     assert.throws(() => args.next());
 });
 
@@ -209,7 +209,7 @@ test("switch zero value", () => {
 
     assert(args.next());
     assert.equal(args.name, "switch");
-    assert.equal(args.boolValue, false);
+    assert.equal(args.readBoolValue(), false);
     assert.throws(() => args.next());
 });
 
@@ -219,7 +219,7 @@ test("switch non-zero value", () => {
 
     assert(args.next());
     assert.equal(args.name, "switch");
-    assert.equal(args.boolValue, true);
+    assert.equal(args.readBoolValue(), true);
     assert.throws(() => args.next());
 });
 
@@ -230,10 +230,10 @@ test("switch value doesn't use separated", () => {
 
     assert(args.next());
     assert.equal(args.name, "switch");
-    assert.equal(args.boolValue, true);
+    assert.equal(args.readBoolValue(), true);
 
     assert(args.next());
-    assert.equal(args.value, "off");
+    assert.equal(args.readValue(), "off");
 });
 
 
@@ -244,7 +244,7 @@ test("integer value", () => {
 
     assert(args.next());
     assert.equal(args.name, "val");
-    assert.equal(args.intValue, 23);
+    assert.equal(args.readIntValue(), 23);
     assert(!args.next());
 });
 
@@ -254,7 +254,7 @@ test("hex value", () => {
 
     assert(args.next());
     assert.equal(args.name, "val");
-    assert.equal(args.intValue, 35);
+    assert.equal(args.readIntValue(), 35);
     assert(!args.next());
 });
 
@@ -265,7 +265,7 @@ test("integer value throws", () => {
 
     assert(args.next());
     assert.equal(args.name, "val");
-    assert.throws(() => args.intValue);
+    assert.throws(() => args.readIntValue());
 });
 
 
@@ -275,7 +275,7 @@ test("one-of", () => {
 
     assert(args.next());
     assert.equal(args.name, "val");
-    assert.equal(args.oneOfValue("apples,pears,bananas"), "apples");
+    assert.equal(args.readEnumValue("apples,pears,bananas"), "apples");
 });
 
 test("one-of throws", () => {
@@ -284,7 +284,7 @@ test("one-of throws", () => {
 
     assert(args.next());
     assert.equal(args.name, "val");
-    assert.throws(() => args.oneOfValue("apples,pears,bananas"));
+    assert.throws(() => args.readEnumValue("apples,pears,bananas"));
 });
 
 
@@ -303,8 +303,8 @@ test("command tail", () => {
 
     assert(args.next());
     assert.equal(args.name, null);
-    assert.equal(args.value, "command");
-    assert.deepStrictEqual(args.tail, [ "a", "b", "c" ]);
+    assert.equal(args.readValue(), "command");
+    assert.deepStrictEqual(args.readTail(), [ "a", "b", "c" ]);
     assert(!args.next());
 });
 
@@ -315,7 +315,7 @@ test("delimited tail", () => {
 
     assert(args.next());
     assert.equal(args.name, "--");
-    assert.deepStrictEqual(args.tail, [ "a", "b", "c" ]);
+    assert.deepStrictEqual(args.readTail(), [ "a", "b", "c" ]);
     assert(!args.next());
 });
 

@@ -83,7 +83,7 @@ export function clargs(args)
         }
     }
 
-    function getValue()
+    function readValue()
     {
         if (resolvedVal !== undefined)
             return resolvedVal;
@@ -116,7 +116,7 @@ export function clargs(args)
         return resolvedVal;
     }
 
-    function tail()
+    function readTail()
     {
         if (shortArgIndex >= 0)
             throw new Error(`unconsumed arguments '${argName.substring(shortArgIndex + 1)}' before tail`);
@@ -125,7 +125,7 @@ export function clargs(args)
         return val;
     }
 
-    function boolValue()
+    function readBoolValue()
     {
         // -abc
         if (shortArgIndex >= 0)
@@ -157,30 +157,30 @@ export function clargs(args)
         throw new Error(`expected a boolean value, not ${argVal}`);
     }
 
-    function intValue()
+    function readIntValue()
     {
-        let val = parseInt(getValue());
+        let val = parseInt(readValue());
         if (isNaN(val))
-            throw new Error(`expected integer value, not ${getValue()}`);
+            throw new Error(`expected integer value, not ${readValue()}`);
         return val;
     }
 
-    function floatValue()
+    function readFloatValue()
     {
-        let val = parseFloat(getValue());
+        let val = parseFloat(readValue());
         if (isNaN(val))
-            throw new Error(`expected numeric value, not ${getValue()}`);
+            throw new Error(`expected numeric value, not ${readValue()}`);
         return val;
     }
 
-    function oneOfValue(values)
+    function readEnumValue(values)
     {
         if (!Array.isArray(values))
             values = values.split(/[|,]/);
 
         values = values.map(x => x.toLowerCase());
         
-        let val = getValue();
+        let val = readValue();
         if (values.indexOf(val.toLowerCase()) < 0)
             throw new Error(`expected one of ${values.join("|")} not ${val}`);
 
@@ -190,7 +190,7 @@ export function clargs(args)
     function peekValue()
     {
         let save = capture();
-        let value = getValue();
+        let value = readValue();
         restore(save);
         return value;
     }
@@ -199,14 +199,14 @@ export function clargs(args)
         next,
         get name() { return getName() },
         get peekValue() { return peekValue() },
-        get value() { return getValue() },
-        get boolValue() { return boolValue() },
-        get intValue() { return intValue() },
-        get floatValue() { return floatValue() },
-        get tail() { return tail() },
+        readValue,
+        readBoolValue,
+        readIntValue,
+        readFloatValue,
+        readTail,
+        readEnumValue,
         capture,
         restore,
-        oneOfValue(values) { return oneOfValue(values) },
     }
 }
 
