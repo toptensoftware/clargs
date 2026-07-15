@@ -146,11 +146,13 @@ export function clargs(args)
             case "true":
             case "on":
             case "yes":
+                argVal = null;
                 return true;
 
             case "false":
             case "off":
             case "no":
+                argVal = null;
                 return false;
         }
 
