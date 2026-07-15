@@ -1,6 +1,6 @@
 {
   "name": "@toptensoftware/clargs",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Command Line Args Helpers",
   "main": "index.js",
   "type": "module",
@@ -19,6 +19,5 @@
     "url": "git+https://github.com/toptensoftware/clargs.git"
   },
   "license": "Apache-2.0",
-  "dependencies": {
-  }
+  "dependencies": {}
 }
